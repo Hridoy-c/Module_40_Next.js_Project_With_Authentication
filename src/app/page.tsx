@@ -9,7 +9,9 @@ type Section = {
 };
 
 const HomePage = async () => {
-  const res = await fetch("https://news-api-v2.vercel.app/api/news/sections");
+  const res = await fetch("https://news-api-v2.vercel.app/api/news/sections", {
+    next: { revalidate: 300 },
+  });
   const data = await res.json();
 
   const allNews: Section[] = (data.data as Section[])
@@ -22,10 +24,10 @@ const HomePage = async () => {
   const mainNews = allNews[0].articles;
 
   return (
-    <main className="mx-auto min-h-screen w-[92%] pt-4 pb-8 sm:w-[94%] lg:w-full lg:max-w-[85vw]">
+    <div className="mx-auto w-[92%] pt-4 pb-8 sm:w-[94%] lg:w-full lg:max-w-[80vw]">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-6">
         {/* Left Side */}
-        <div className="min-w-0  lg:col-span-2">
+        <div className="min-w-0 lg:col-span-2">
           <MainNews mainNews={mainNews} />
 
           {allNews.slice(1).map((section, index) => (
@@ -38,13 +40,13 @@ const HomePage = async () => {
         </div>
 
         {/* Right Side */}
-        <aside className="min-w-0 mt-5 lg:col-span-1">
+        <aside className="min-w-0 lg:col-span-1">
           <div className="lg:sticky lg:top-4">
             <MostRead />
           </div>
         </aside>
       </div>
-    </main>
+    </div>
   );
 };
 

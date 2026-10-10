@@ -11,7 +11,7 @@ export type Article = {
   firstPublished: string | null;
 };
 
-const formatDate = (iso: string) => {
+export  const formatDate = (iso: string) => {
   const d = new Date(iso);
   const date = d.toLocaleDateString("bn-BD", {
     day: "numeric",
