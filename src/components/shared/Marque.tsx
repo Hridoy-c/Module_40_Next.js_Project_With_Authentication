@@ -2,9 +2,16 @@ import Link from "next/link";
 import MarqueeText from "react-marquee-text";
 import "react-marquee-text/dist/styles.css";
 
-const getLatestNewsApi = async () => {
+type LatestNews = {
+  id: string;
+  title: string;
+};
+
+const getLatestNewsApi = async (): Promise<LatestNews[]> => {
   try {
-    const res = await fetch("https://news-api-v2.vercel.app/api/news");
+    const res = await fetch("https://news-api-v2.vercel.app/api/news", {
+      next: { revalidate: 300 },
+    });
     if (!res.ok) return [];
     const data = await res.json();
     return data.data;
@@ -17,26 +24,32 @@ const getLatestNewsApi = async () => {
 const Marque = async () => {
   const latestNews = await getLatestNewsApi();
 
+  if (!latestNews.length) return null;
+
   return (
-    <div className="bg-gray-200 mt-3">
-      <div className=" py-2   max-w-[80vw] mx-auto">
-      <div className="flex">
-        <div className="">সর্বশেষ</div>
-        <MarqueeText direction="right" duration={20}>
-          <div className="">
-            {latestNews.map((newsItem: any, index: number) => (
+    <div className="sticky top-0 z-10 mt-3 bg-gray-200">
+      <div className="mx-auto flex w-[92%] items-center gap-2 py-1.5 sm:w-[94%] sm:gap-3 sm:py-2 lg:w-full lg:max-w-[80vw]">
+        {/* label */}
+        <div className="shrink-0 rounded bg-red-700 px-2 py-1 text-xs font-bold text-white sm:px-3 sm:text-sm">
+          সর্বশেষ
+        </div>
+
+        {/* ticker */}
+        <div className="min-w-0 flex-1 overflow-hidden">
+          <MarqueeText direction="right" duration={20}>
+            {latestNews.map((newsItem, index) => (
               <Link
-                key={index}
+                key={newsItem.id ?? index}
                 href={`/news/${newsItem.id}`}
-                className="px-2 py-1 text-sm font-semibold text-gray-800 hover:text-blue-600"
+                className="whitespace-nowrap px-2 text-xs font-semibold text-gray-800 hover:text-red-700 sm:text-sm"
               >
-                <span className="mr-2 text-gray-600">•</span> {newsItem.title}
+                <span className="mr-2 text-gray-500">•</span>
+                {newsItem.title}
               </Link>
             ))}
-          </div>
-        </MarqueeText>
+          </MarqueeText>
+        </div>
       </div>
-    </div>
     </div>
   );
 };

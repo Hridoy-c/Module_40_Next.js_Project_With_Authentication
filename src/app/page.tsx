@@ -41,7 +41,7 @@ const HomePage = async () => {
 
         {/* Right Side */}
         <aside className="min-w-0 lg:col-span-1">
-          <div className="lg:sticky lg:top-4">
+          <div className=" lg:top-4">
             <MostRead />
           </div>
         </aside>
