@@ -1,4 +1,4 @@
- export default interface ICategorieType {
+export interface ICategorieType {
   id: string;
   slug: string;
   title: string;
@@ -7,7 +7,7 @@
   scrapable: boolean;
 }
 
-export default interface IMainNewsType{
+export interface IMainNewsType {
   id: string;
   title: string;
   titleAlt: string;
@@ -17,10 +17,9 @@ export default interface IMainNewsType{
   date: string;
 }
 
-
-export default interface IMostReadNewsType  {
-  id: string
-  title: string
-  link: string
-  rank: number
+export interface IMostReadNewsType {
+  id: string;
+  title: string;
+  link: string;
+  rank: number;
 }
