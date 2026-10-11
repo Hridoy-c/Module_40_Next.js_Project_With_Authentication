@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import HomeSkeleton from "@/components/All-Skeleton/HomeSkeleton";
 import MainNews from "@/components/homepage/MainNews";
 import MostRead from "@/components/homepage/MostRead";
 import { Article } from "@/components/homepage/NewsCard";
@@ -8,7 +10,7 @@ type Section = {
   articles: Article[];
 };
 
-const HomePage = async () => {
+const HomeContent = async () => {
   const res = await fetch("https://news-api-v2.vercel.app/api/news/sections", {
     next: { revalidate: 300 },
   });
@@ -41,7 +43,7 @@ const HomePage = async () => {
 
         {/* Right Side */}
         <aside className="min-w-0 lg:col-span-1">
-          <div className=" lg:top-4">
+          <div className="lg:sticky lg:top-13">
             <MostRead />
           </div>
         </aside>
@@ -49,5 +51,11 @@ const HomePage = async () => {
     </div>
   );
 };
+
+const HomePage = () => (
+  <Suspense fallback={<HomeSkeleton />}>
+    <HomeContent />
+  </Suspense>
+);
 
 export default HomePage;

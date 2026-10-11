@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import MostRead from "@/components/homepage/MostRead";
 import { formatDate } from "@/components/homepage/NewsCard";
+import BackButton from "@/components/shared/BackButton";
 
 type Block =
   | { type: "text"; text: string }
@@ -68,6 +69,7 @@ const ArticleDetailsPage = async ({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
         {/* Article */}
         <article className="min-w-0 lg:col-span-2">
+            <BackButton />
           {article.topics?.length > 0 && (
             <div className="mb-3 flex flex-wrap gap-2">
               {article.topics.map((topic) => (
@@ -185,7 +187,7 @@ const ArticleDetailsPage = async ({
 
         {/* Sidebar */}
         <aside className="min-w-0 lg:col-span-1">
-          <div className="lg:sticky lg:top-4">
+          <div className="lg:sticky lg:top-13">
             <MostRead />
           </div>
         </aside>

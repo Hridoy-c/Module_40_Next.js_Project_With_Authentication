@@ -5,6 +5,9 @@ import Header from "@/components/shared/Header";
 import Marque from "@/components/shared/Marque";
 import NavList from "@/components/shared/NavList";
 import Footer from "@/components/shared/Footer";
+import { Suspense } from "react";
+import NavListSkeleton from "@/components/All-Skeleton/NavListSkeleton";
+import MarqueSkeleton from "@/components/All-Skeleton/MarqueSkeleton";
 
 const notoSerifBengali = Noto_Serif_Bengali({
   subsets: ["latin", "bengali"],
@@ -24,8 +27,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body suppressHydrationWarning className="flex min-h-full flex-col">
         <Header />
-        <NavList />
-        <Marque />
+        <Suspense fallback={<NavListSkeleton />}>
+          <NavList />
+        </Suspense>
+        <Suspense fallback={<MarqueSkeleton />}>
+          <Marque />
+        </Suspense>
 
         <main className="flex-1">{children}</main>
         <Footer />
