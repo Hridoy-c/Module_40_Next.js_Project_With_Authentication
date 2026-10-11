@@ -1,5 +1,6 @@
 import React from 'react'
 import IMostReadNewsType from '@/types/All-Types'
+import Link from 'next/link'
 
 
 const MostRead = async () => {
@@ -20,14 +21,14 @@ const MostRead = async () => {
             <span className="w-6 shrink-0 text-xl font-semibold leading-none text-rose-500 sm:w-7 sm:text-2xl">
               {item.rank.toLocaleString('bn-BD')}
             </span>
-            <a
-              href={item.link}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link 
+              href={`/article/${item.id}`}
+              
+              
               className="min-w-0 break-words text-sm font-medium leading-snug text-gray-900 hover:text-rose-700 sm:text-[15px]"
             >
               {item.title.trim()}
-            </a>
+            </Link>
           </li>
         ))}
       </ol>

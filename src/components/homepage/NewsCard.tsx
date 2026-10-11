@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export type Article = {
   id: string;
   title: string;
@@ -29,10 +31,10 @@ export  const formatDate = (iso: string) => {
 
 const NewsCard = ({ article }: { article: Article }) => {
   return (
-    <a
-      href={article.link}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href={`/article/${article.id}`}
+      
+     
       className="group flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition hover:shadow-md"
     >
       {article.imageUrl && (
@@ -75,7 +77,7 @@ const NewsCard = ({ article }: { article: Article }) => {
           </p>
         )}
       </div>
-    </a>
+    </Link>
   );
 };
 

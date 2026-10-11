@@ -12,6 +12,8 @@ const MainNewsCard = ({ mainNews }: MainNewsTypeProps) => {
     <div>
       <section className="grid gap-5 lg:grid-cols-4">
         {/* main card */}
+     
+        
         <article className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md lg:col-span-2">
           <Link href={`/article/${firstNews?.id}`} className="block">
             {/* eslint-disable-next-line @next/next/no-img-element */}

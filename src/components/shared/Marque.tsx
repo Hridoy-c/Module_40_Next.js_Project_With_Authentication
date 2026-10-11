@@ -40,7 +40,7 @@ const Marque = async () => {
             {latestNews.map((newsItem, index) => (
               <Link
                 key={newsItem.id ?? index}
-                href={`/news/${newsItem.id}`}
+                href={`/article/${newsItem.id}`}
                 className="whitespace-nowrap px-2 text-xs font-semibold text-gray-800 hover:text-red-700 sm:text-sm"
               >
                 <span className="mr-2 text-gray-500">•</span>
