@@ -51,13 +51,13 @@ const Header = () => {
 
         <div className="flex shrink-0 items-center justify-end gap-2 sm:gap-4 md:w-44">
           <Link
-            href="/signin"
+            href="/sign-in"
             className="whitespace-nowrap text-xs text-gray-700 hover:text-black sm:text-sm"
           >
             সাইন ইন
           </Link>
           <Link
-            href="/signup"
+            href="/sign-up"
             className="whitespace-nowrap rounded-md bg-red-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-800 sm:px-4 sm:py-2 sm:text-sm"
           >
             সাইন আপ
