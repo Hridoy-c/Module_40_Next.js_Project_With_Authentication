@@ -146,7 +146,7 @@ const SignInForm = () => {
           <button
             type="button"
             onClick={() => handleSocial("google")}
-            className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white py-2.5 text-sm font-medium text-gray-800 transition hover:bg-gray-50 sm:text-base"
+            className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-md border border-gray-300 bg-white py-2.5 text-sm font-medium text-gray-800 transition hover:bg-gray-50 sm:text-base"
           >
             <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
               <path
@@ -172,7 +172,7 @@ const SignInForm = () => {
           <button
             type="button"
             onClick={() => handleSocial("github")}
-            className="flex w-full items-center justify-center gap-3 rounded-md bg-gray-900 py-2.5 text-sm font-medium text-white transition hover:bg-black sm:text-base"
+            className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-md bg-gray-900 py-2.5 text-sm font-medium text-white transition hover:bg-black sm:text-base"
           >
             <svg
               viewBox="0 0 24 24"
