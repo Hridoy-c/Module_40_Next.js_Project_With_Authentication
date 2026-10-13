@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { signUp } from "@/lib/auth-client";
+import { signIn, signUp } from "@/lib/auth-client";
 
 type Errors = Partial<
   Record<"name" | "email" | "phone" | "password" | "image", string>
@@ -86,6 +86,35 @@ const SignUpForm = () => {
       setLoading(false);
     }
   };
+
+ const [socialLoading, setSocialLoading] = useState(false);
+
+const SignInWithGoogle = async () => {
+  setSocialLoading(true);
+  try {
+    await signIn.social({
+      provider: "google",
+      callbackURL: "/", // where to go after login
+    });
+  } catch {
+    setFormError("Google দিয়ে সাইন ইন করা যায়নি, আবার চেষ্টা করুন");
+    setSocialLoading(false);
+  }
+};
+
+
+const SignInWithGithub = async () => {
+  setSocialLoading(true);
+  try {
+    await signIn.social({
+      provider: "github",
+      callbackURL: "/", // where to go after login
+    });
+  } catch {
+    setFormError("Github দিয়ে সাইন ইন করা যায়নি, আবার চেষ্টা করুন");
+    setSocialLoading(false);
+  }
+};
 
   return (
     <div className="mx-auto w-[92%] max-w-md py-8 sm:py-12">
@@ -188,8 +217,11 @@ const SignUpForm = () => {
         {/* social */}
         <div className="space-y-3">
           <button
+            onClick={SignInWithGoogle}
+            disabled={socialLoading}
+
             type="button"
-            className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white py-2.5 text-sm font-medium text-gray-800 transition hover:bg-gray-50 sm:text-base"
+            className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-md border border-gray-300 bg-white py-2.5 text-sm font-medium text-gray-800 transition hover:bg-gray-50 sm:text-base"
           >
             <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
               <path
@@ -213,8 +245,9 @@ const SignUpForm = () => {
           </button>
 
           <button
+            onClick={SignInWithGithub}
             type="button"
-            className="flex w-full items-center justify-center gap-3 rounded-md bg-gray-900 py-2.5 text-sm font-medium text-white transition hover:bg-black sm:text-base"
+            className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-md bg-gray-900 py-2.5 text-sm font-medium text-white transition hover:bg-black sm:text-base"
           >
             <svg
               viewBox="0 0 24 24"
