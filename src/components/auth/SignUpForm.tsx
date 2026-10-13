@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { signUp } from "@/lib/auth-client";
 
 type Errors = Partial<
   Record<"name" | "email" | "phone" | "password" | "image", string>
@@ -29,35 +31,17 @@ const Field = ({
 );
 
 const SignUpForm = () => {
+  const router = useRouter();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [image, setImage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [image, setImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<Errors>({});
+  const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null;
-
-    if (file && !file.type.startsWith("image/")) {
-      setErrors((prev) => ({ ...prev, image: "শুধু ছবি আপলোড করুন" }));
-      return;
-    }
-    if (file && file.size > 2 * 1024 * 1024) {
-      setErrors((prev) => ({ ...prev, image: "ছবির সাইজ ২MB এর কম হতে হবে" }));
-      return;
-    }
-
-    setErrors((prev) => ({ ...prev, image: undefined }));
-    setImage(file);
-
-    // free the old preview, then create the new one
-    if (preview) URL.revokeObjectURL(preview);
-    setPreview(file ? URL.createObjectURL(file) : null);
-  };
 
   const validate = () => {
     const next: Errors = {};
@@ -67,26 +51,40 @@ const SignUpForm = () => {
       next.phone = "সঠিক মোবাইল নম্বর দিন (যেমন 01712345678)";
     if (password.length < 8)
       next.password = "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে";
+    if (image.trim() && !/^https?:\/\/\S+$/i.test(image.trim()))
+      next.image = "সঠিক ছবির লিংক দিন (https://...)";
     setErrors(next);
     return Object.keys(next).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setFormError("");
+
     if (!validate()) return;
 
     setLoading(true);
     try {
-      // TODO: call your auth sign-up here
-      console.log({ name, email, phone, password, image });
+      const { data, error } = await signUp.email({
+        name: name.trim(),
+        email: email.trim(),
+        password,
+        image: image.trim() || undefined,
+      });
+
+      if (error) {
+        setFormError(error.message ?? "সাইন আপ করা যায়নি, আবার চেষ্টা করুন");
+        return;
+      }
+
+      console.log(data);
+      router.push("/");
+      router.refresh();
+    } catch {
+      setFormError("কিছু একটা সমস্যা হয়েছে, আবার চেষ্টা করুন");
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSocial = (provider: "google" | "github") => {
-    // TODO: call your social login here
-    console.log("social login:", provider);
   };
 
   return (
@@ -100,36 +98,15 @@ const SignUpForm = () => {
         </p>
 
         <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-4">
-          {/* image */}
-          <Field label="প্রোফাইল ছবি" error={errors.image}>
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-gray-300 bg-gray-100 text-gray-400">
-                {preview ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={preview}
-                    alt="প্রোফাইল ছবির প্রিভিউ"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="h-8 w-8"
-                    aria-hidden="true"
-                  >
-                    <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v1h16v-1c0-2.76-3.58-5-8-5Z" />
-                  </svg>
-                )}
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImage}
-                className="min-w-0 flex-1 text-sm text-gray-600 file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-red-50 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-red-700 hover:file:bg-red-100"
-              />
-            </div>
+          <Field label="প্রোফাইল ছবির লিংক" error={errors.image}>
+            <input
+              type="url"
+              value={image}
+              onChange={(e) => setImage(e.target.value)}
+              placeholder="https://example.com/photo.jpg"
+              inputMode="url"
+              className={inputClass}
+            />
           </Field>
 
           <Field label="নাম" error={errors.name}>
@@ -186,6 +163,12 @@ const SignUpForm = () => {
             </div>
           </Field>
 
+          {formError && (
+            <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+              {formError}
+            </p>
+          )}
+
           <button
             type="submit"
             disabled={loading}
@@ -206,7 +189,6 @@ const SignUpForm = () => {
         <div className="space-y-3">
           <button
             type="button"
-            onClick={() => handleSocial("google")}
             className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white py-2.5 text-sm font-medium text-gray-800 transition hover:bg-gray-50 sm:text-base"
           >
             <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
@@ -232,7 +214,6 @@ const SignUpForm = () => {
 
           <button
             type="button"
-            onClick={() => handleSocial("github")}
             className="flex w-full items-center justify-center gap-3 rounded-md bg-gray-900 py-2.5 text-sm font-medium text-white transition hover:bg-black sm:text-base"
           >
             <svg

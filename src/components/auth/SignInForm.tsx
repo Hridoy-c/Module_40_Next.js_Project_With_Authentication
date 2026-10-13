@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { signIn } from "@/lib/auth-client";
 
 type Errors = Partial<Record<"email" | "password", string>>;
 
@@ -27,10 +29,13 @@ const Field = ({
 );
 
 const SignInForm = () => {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
+  const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const validate = () => {
@@ -41,20 +46,36 @@ const SignInForm = () => {
     return Object.keys(next).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setFormError("");
+
     if (!validate()) return;
 
     setLoading(true);
     try {
-      // TODO: call your auth sign-in here
-      console.log({ email, password });
+      const { error } = await signIn.email({
+        email: email.trim(),
+        password,
+      });
+
+      if (error) {
+        setFormError(error.message ?? "ইমেইল বা পাসওয়ার্ড ভুল হয়েছে");
+        return;
+      }
+
+      router.push("/");
+      router.refresh();
+    } catch {
+      setFormError("কিছু একটা সমস্যা হয়েছে, আবার চেষ্টা করুন");
     } finally {
       setLoading(false);
     }
   };
 
-
+  const handleSocial = async (provider: "google" | "github") => {
+    await signIn.social({ provider, callbackURL: "/" });
+  };
 
   return (
     <div className="mx-auto w-[92%] max-w-md py-8 sm:py-12">
@@ -98,6 +119,12 @@ const SignInForm = () => {
             </div>
           </Field>
 
+          {formError && (
+            <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+              {formError}
+            </p>
+          )}
+
           <button
             type="submit"
             disabled={loading}
@@ -118,6 +145,7 @@ const SignInForm = () => {
         <div className="space-y-3">
           <button
             type="button"
+            onClick={() => handleSocial("google")}
             className="flex w-full items-center justify-center gap-3 rounded-md border border-gray-300 bg-white py-2.5 text-sm font-medium text-gray-800 transition hover:bg-gray-50 sm:text-base"
           >
             <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true">
@@ -143,6 +171,7 @@ const SignInForm = () => {
 
           <button
             type="button"
+            onClick={() => handleSocial("github")}
             className="flex w-full items-center justify-center gap-3 rounded-md bg-gray-900 py-2.5 text-sm font-medium text-white transition hover:bg-black sm:text-base"
           >
             <svg
